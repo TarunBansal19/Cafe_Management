@@ -129,6 +129,3 @@ Supported formats: JPG, PNG, WebP, GIF (max 20MB).
 
 Import `postman/Cafe-MVP-Postman-Collection.json` into Postman and point the base URL at `http://localhost:3000/api/v1`.
 
----
-
-s

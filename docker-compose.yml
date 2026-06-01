@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: epsilon
+      POSTGRES_PASSWORD: test@123
+      POSTGRES_DB: cafe_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U epsilon -d cafe_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      db:
+        condition: service_healthy  
+    restart: on-failure  
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://epsilon:test%40123@db:5432/cafe_db
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      IMAGEKIT_PUBLIC_KEY: ${IMAGEKIT_PUBLIC_KEY}
+      IMAGEKIT_PRIVATE_KEY: ${IMAGEKIT_PRIVATE_KEY}
+      IMAGEKIT_URL_ENDPOINT: ${IMAGEKIT_URL_ENDPOINT}
+
+volumes:
+  postgres_data:
